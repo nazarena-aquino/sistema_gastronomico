@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
-import { configApi, productApi } from '../api'
+import { productApi } from '../api'
 import { useConfigStore } from '../store/authStore'
 import { formatPrice } from '../utils/format'
 import { api } from '../api'
@@ -10,7 +10,9 @@ import styles from './ReservationPage.module.css'
 
 interface CartItem { product_id: string; product_name: string; price: number; quantity: number }
 
-const DAYS: Record<string, string> = {
+type ReservationType = 'table' | 'preorder' | 'pickup' | ''
+
+const DAYS: Record<number, string> = {
   0: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday',
   4: 'thursday', 5: 'friday', 6: 'saturday',
 }
@@ -34,10 +36,16 @@ const getTodayMin = () => {
   return d.toISOString().split('T')[0]
 }
 
+const TYPE_LABELS: Record<string, string> = {
+  table: '🪑 Solo mesa',
+  preorder: '📋 Mesa + pre-pedido',
+  pickup: '🛍️ Solo pedido (para retirar)',
+}
+
 export default function ReservationPage() {
   const { config } = useConfigStore()
   const [step, setStep] = useState(1)
-  const [type, setType] = useState<'table' | 'preorder' | ''>('')
+  const [type, setType] = useState<ReservationType>('')
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [people, setPeople] = useState(2)
@@ -67,7 +75,7 @@ export default function ReservationPage() {
   }
 
   useEffect(() => {
-    if (type === 'preorder') {
+    if (type === 'preorder' || type === 'pickup') {
       productApi.getAll().then(r => setProducts(r.data.data || [])).catch(() => {})
       productApi.getCategories().then(r => setCategories(r.data.data || [])).catch(() => {})
     }
@@ -102,14 +110,16 @@ export default function ReservationPage() {
 
   const handleSubmit = async () => {
     if (!name.trim()) { toast.error('Ingresá tu nombre'); return }
+    if (!email.trim()) { toast.error('Ingresá tu email'); return }
+    if (!phone.trim()) { toast.error('Ingresá tu teléfono o WhatsApp'); return }
     setSubmitting(true)
     try {
       await api.post('/reservations', {
         customer_name: name.trim(),
-        customer_email: email || null,
-        customer_phone: phone || null,
+        customer_email: email.trim(),
+        customer_phone: phone.trim(),
         reservation_type: type,
-        people_count: people,
+        people_count: type === 'pickup' ? 1 : people,
         date, time,
         notes: notes || null,
         items: cart,
@@ -128,11 +138,11 @@ export default function ReservationPage() {
         <div className={styles.successCard}>
           <div className={styles.successIcon}>🎉</div>
           <h2>¡Reserva enviada!</h2>
-          <p>Revisaremos tu solicitud y te confirmaremos a la brevedad{email ? ' por email' : ''}.</p>
+          <p>Revisaremos tu solicitud y te confirmaremos a la brevedad por email.</p>
           <div className={styles.successDetails}>
             <p><strong>📅</strong> {new Date(date + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
             <p><strong>🕐</strong> {time}</p>
-            <p><strong>👥</strong> {people} persona{people !== 1 ? 's' : ''}</p>
+            {type !== 'pickup' && <p><strong>👥</strong> {people} persona{people !== 1 ? 's' : ''}</p>}
           </div>
           <Link to="/" className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: '1.5rem' }}>Volver al inicio</Link>
         </div>
@@ -156,7 +166,7 @@ export default function ReservationPage() {
               <div key={s} className={`${styles.progressStep} ${step >= s ? styles.progressActive : ''}`}>
                 <span className={styles.progressDot}>{step > s ? '✓' : s}</span>
                 <span className={styles.progressLabel}>
-                  {s === 1 ? 'Tipo' : s === 2 ? 'Fecha y hora' : s === 3 ? type === 'preorder' ? 'Productos' : 'Confirmar' : 'Confirmar'}
+                  {s === 1 ? 'Tipo' : s === 2 ? 'Fecha y hora' : s === 3 ? (type === 'preorder' || type === 'pickup') ? 'Productos' : 'Confirmar' : 'Confirmar'}
                 </span>
               </div>
             ))}
@@ -183,6 +193,14 @@ export default function ReservationPage() {
                   <strong>Mesa + pre-pedido</strong>
                   <p>Elegí los productos de antemano</p>
                 </button>
+                <button
+                  className={`${styles.typeCard} ${type === 'pickup' ? styles.typeSelected : ''}`}
+                  onClick={() => setType('pickup')}
+                >
+                  <span className={styles.typeIcon}>🛍️</span>
+                  <strong>Solo pedido</strong>
+                  <p>Pedí y pasá a buscar en el horario que elijas</p>
+                </button>
               </div>
               <button
                 className="btn btn-primary btn-lg"
@@ -198,7 +216,7 @@ export default function ReservationPage() {
           {/* Step 2: Date / Time / People */}
           {step === 2 && (
             <div className={styles.stepCard}>
-              <h2>¿Cuándo y cuántos?</h2>
+              <h2>¿Cuándo{type !== 'pickup' ? ' y cuántos' : ''}?</h2>
               <div className={styles.formGrid}>
                 <div className="form-group">
                   <label className="form-label">Fecha</label>
@@ -210,12 +228,18 @@ export default function ReservationPage() {
                     onChange={e => setDate(e.target.value)}
                   />
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Cantidad de personas</label>
-                  <select className="form-select" value={people} onChange={e => setPeople(Number(e.target.value))}>
-                    {[1,2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>{n} persona{n !== 1 ? 's' : ''}</option>)}
-                  </select>
-                </div>
+                {type !== 'pickup' && (
+                  <div className="form-group">
+                    <label className="form-label">Cantidad de personas</label>
+                    <input
+                      type="number"
+                      className="form-input"
+                      min={1}
+                      value={people}
+                      onChange={e => setPeople(Math.max(1, parseInt(e.target.value) || 1))}
+                    />
+                  </div>
+                )}
               </div>
               {date && timeSlots.length === 0 && (
                 <p className={styles.closedMsg}>⚠️ El local no abre ese día. Elegí otra fecha.</p>
@@ -241,7 +265,7 @@ export default function ReservationPage() {
                 <button
                   className="btn btn-primary"
                   disabled={!date || !time}
-                  onClick={() => setStep(type === 'preorder' ? 3 : 4)}
+                  onClick={() => setStep(type === 'preorder' || type === 'pickup' ? 3 : 4)}
                 >
                   Continuar →
                 </button>
@@ -249,8 +273,8 @@ export default function ReservationPage() {
             </div>
           )}
 
-          {/* Step 3: Products (only preorder) */}
-          {step === 3 && type === 'preorder' && (
+          {/* Step 3: Products (preorder and pickup) */}
+          {step === 3 && (type === 'preorder' || type === 'pickup') && (
             <div className={styles.stepCard}>
               <h2>Elegí los productos</h2>
               <div className={styles.categories}>
@@ -302,12 +326,11 @@ export default function ReservationPage() {
             <div className={styles.stepCard}>
               <h2>Tus datos y confirmación</h2>
 
-              {/* Summary */}
               <div className={styles.summary}>
-                <div className={styles.summaryRow}><span>Tipo</span><strong>{type === 'table' ? '🪑 Solo mesa' : '📋 Mesa + pre-pedido'}</strong></div>
+                <div className={styles.summaryRow}><span>Tipo</span><strong>{TYPE_LABELS[type]}</strong></div>
                 <div className={styles.summaryRow}><span>Fecha</span><strong>{new Date(date + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}</strong></div>
                 <div className={styles.summaryRow}><span>Hora</span><strong>{time}</strong></div>
-                <div className={styles.summaryRow}><span>Personas</span><strong>{people}</strong></div>
+                {type !== 'pickup' && <div className={styles.summaryRow}><span>Personas</span><strong>{people}</strong></div>}
                 {cart.length > 0 && <div className={styles.summaryRow}><span>Pre-pedido</span><strong>{formatPrice(cartTotal)}</strong></div>}
               </div>
 
@@ -317,12 +340,12 @@ export default function ReservationPage() {
                   <input className="form-input" placeholder="Tu nombre" value={name} onChange={e => setName(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">Email *</label>
                   <input type="email" className="form-input" placeholder="Para la confirmación" value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Teléfono / WhatsApp</label>
-                  <input className="form-input" placeholder="Opcional" value={phone} onChange={e => setPhone(e.target.value)} />
+                  <label className="form-label">Teléfono / WhatsApp *</label>
+                  <input className="form-input" placeholder="Tu número" value={phone} onChange={e => setPhone(e.target.value)} />
                 </div>
                 <div className="form-group" style={{ gridColumn: '1/-1' }}>
                   <label className="form-label">Notas (opcional)</label>
@@ -331,8 +354,8 @@ export default function ReservationPage() {
               </div>
 
               <div className={styles.stepActions}>
-                <button className="btn btn-secondary" onClick={() => setStep(type === 'preorder' ? 3 : 2)}>← Atrás</button>
-                <button className="btn btn-primary btn-lg" disabled={submitting || !name.trim()} onClick={handleSubmit}>
+                <button className="btn btn-secondary" onClick={() => setStep(type === 'preorder' || type === 'pickup' ? 3 : 2)}>← Atrás</button>
+                <button className="btn btn-primary btn-lg" disabled={submitting || !name.trim() || !email.trim() || !phone.trim()} onClick={handleSubmit}>
                   {submitting ? 'Enviando...' : '✅ Confirmar reserva'}
                 </button>
               </div>

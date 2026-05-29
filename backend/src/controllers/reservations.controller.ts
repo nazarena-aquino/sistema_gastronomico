@@ -10,7 +10,7 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
     if (!customer_name || !date || !time || !reservation_type) {
       sendError(res, 'Nombre, fecha, hora y tipo son requeridos', 400); return;
     }
-    if (!['table', 'preorder'].includes(reservation_type)) {
+    if (!['table', 'preorder', 'pickup'].includes(reservation_type)) {
       sendError(res, 'Tipo inválido', 400); return;
     }
 

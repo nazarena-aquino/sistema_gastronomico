@@ -28,11 +28,10 @@ import AdminOrders from './pages/admin/AdminOrders'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminCategories from './pages/admin/AdminCategories'
 import AdminTables from './pages/admin/AdminTables'
-import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminDiscounts from './pages/admin/AdminDiscounts'
 import AdminStock from './pages/admin/AdminStock'
-import AdminReports from './pages/admin/AdminReports'
 import AdminConfig from './pages/admin/AdminConfig'
+import AdminSchedule from './pages/admin/AdminSchedule'
 import AdminQR from './pages/admin/AdminQR'
 import AdminReservations from './pages/admin/AdminReservations'
 
@@ -79,10 +78,9 @@ export default function App() {
         <Route path="products" element={<AdminProducts />} />
         <Route path="categories" element={<AdminCategories />} />
         <Route path="tables" element={<AdminTables />} />
-        <Route path="customers" element={<AdminCustomers />} />
         <Route path="discounts" element={<AdminDiscounts />} />
         <Route path="stock" element={<AdminStock />} />
-        <Route path="reports" element={<AdminReports />} />
+        <Route path="schedule" element={<AdminSchedule />} />
         <Route path="config" element={<AdminConfig />} />
         <Route path="qr" element={<AdminQR />} />
         <Route path="reservations" element={<AdminReservations />} />

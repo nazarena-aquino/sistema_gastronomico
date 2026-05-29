@@ -11,9 +11,8 @@ const NAV = [
   { to: '/admin/products', label: 'Productos', icon: '🍽️' },
   { to: '/admin/categories', label: 'Categorías', icon: '🏷️' },
   { to: '/admin/stock', label: 'Stock', icon: '📦' },
-  { to: '/admin/customers', label: 'Clientes', icon: '👥' },
   { to: '/admin/discounts', label: 'Descuentos', icon: '🏷️' },
-  { to: '/admin/reports', label: 'Reportes', icon: '📈' },
+  { to: '/admin/schedule', label: 'Horarios', icon: '🕐' },
   { to: '/admin/qr', label: 'Código QR', icon: '📱' },
   { to: '/admin/config', label: 'Configuración', icon: '⚙️' },
 ]

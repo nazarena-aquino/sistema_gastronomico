@@ -10,7 +10,7 @@ interface Reservation {
   customer_name: string
   customer_email?: string
   customer_phone?: string
-  reservation_type: 'table' | 'preorder'
+  reservation_type: 'table' | 'preorder' | 'pickup'
   people_count: number
   date: string
   time: string
@@ -23,9 +23,12 @@ interface Reservation {
 
 const statusLabel: Record<string, string> = { pending: 'Pendiente', confirmed: 'Confirmada', cancelled: 'Cancelada' }
 const statusColor: Record<string, string> = { pending: '#F59E0B', confirmed: '#10B981', cancelled: '#EF4444' }
+const typeLabel: Record<string, string> = { table: '🪑 Solo mesa', preorder: '📋 Mesa + pre-pedido', pickup: '🛍️ Solo pedido' }
 
 const formatDate = (d: string) =>
   new Date(d + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' })
+
+const emptyForm = { customer_name: '', customer_email: '', customer_phone: '', reservation_type: 'table', people_count: 2, date: '', time: '', notes: '' }
 
 export default function AdminReservations() {
   const [reservations, setReservations] = useState<Reservation[]>([])
@@ -33,6 +36,9 @@ export default function AdminReservations() {
   const [filterStatus, setFilterStatus] = useState('')
   const [filterDate, setFilterDate] = useState('')
   const [selected, setSelected] = useState<Reservation | null>(null)
+  const [showNewForm, setShowNewForm] = useState(false)
+  const [newForm, setNewForm] = useState<any>(emptyForm)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     load()
@@ -60,7 +66,7 @@ export default function AdminReservations() {
   const updateStatus = async (id: string, status: string) => {
     try {
       await api.patch(`/reservations/${id}/status`, { status })
-      toast.success(status === 'confirmed' ? '✅ Reserva confirmada — se envió email al cliente' : '❌ Reserva cancelada')
+      toast.success(status === 'confirmed' ? '✅ Reserva confirmada' : '❌ Reserva cancelada')
       setSelected(null)
     } catch { toast.error('Error actualizando reserva') }
   }
@@ -75,6 +81,27 @@ export default function AdminReservations() {
     } catch { toast.error('Error') }
   }
 
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newForm.customer_name.trim() || !newForm.date || !newForm.time) {
+      toast.error('Nombre, fecha y hora son requeridos'); return
+    }
+    setSaving(true)
+    try {
+      await api.post('/reservations', {
+        ...newForm,
+        people_count: Number(newForm.people_count),
+        items: [],
+        total: 0,
+      })
+      toast.success('Reserva creada')
+      setShowNewForm(false)
+      setNewForm(emptyForm)
+      load()
+    } catch { toast.error('Error creando reserva') }
+    finally { setSaving(false) }
+  }
+
   const pending = reservations.filter(r => r.status === 'pending').length
 
   return (
@@ -84,9 +111,9 @@ export default function AdminReservations() {
           <h1>Reservas {pending > 0 && <span className={styles.badge}>{pending} pendiente{pending !== 1 ? 's' : ''}</span>}</h1>
           <p>{reservations.length} reservas</p>
         </div>
+        <button className="btn btn-primary" onClick={() => { setShowNewForm(true); setSelected(null) }}>+ Nueva reserva</button>
       </div>
 
-      {/* Filters */}
       <div className={styles.filters}>
         <select className="form-select" style={{ width: 'auto' }} value={filterStatus} onChange={e => { setFilterStatus(e.target.value); setLoading(true) }}>
           <option value="">Todos los estados</option>
@@ -108,7 +135,7 @@ export default function AdminReservations() {
                 key={r.id}
                 className={`${styles.item} ${selected?.id === r.id ? styles.itemSelected : ''}`}
                 style={{ borderLeftColor: statusColor[r.status] }}
-                onClick={() => setSelected(r)}
+                onClick={() => { setSelected(r); setShowNewForm(false) }}
               >
                 <div className={styles.itemTop}>
                   <strong>{r.customer_name}</strong>
@@ -118,14 +145,67 @@ export default function AdminReservations() {
                 </div>
                 <div className={styles.itemMeta}>
                   <span>📅 {formatDate(r.date)} · {r.time.slice(0, 5)}</span>
-                  <span>👥 {r.people_count} personas</span>
-                  <span>{r.reservation_type === 'table' ? '🪑 Solo mesa' : '📋 Pre-pedido'}</span>
+                  {r.reservation_type !== 'pickup' && <span>👥 {r.people_count} personas</span>}
+                  <span>{typeLabel[r.reservation_type]}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          {selected && (
+          {showNewForm && (
+            <div className={styles.detail}>
+              <div className={styles.detailHeader}>
+                <h2>Nueva reserva manual</h2>
+                <button className={styles.closeBtn} onClick={() => setShowNewForm(false)}>✕</button>
+              </div>
+              <form onSubmit={handleCreate} className={styles.detailBody}>
+                <div className="form-group">
+                  <label className="form-label">Nombre *</label>
+                  <input className="form-input" value={newForm.customer_name} onChange={e => setNewForm((f: any) => ({ ...f, customer_name: e.target.value }))} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Email</label>
+                  <input type="email" className="form-input" value={newForm.customer_email} onChange={e => setNewForm((f: any) => ({ ...f, customer_email: e.target.value }))} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Teléfono / WhatsApp</label>
+                  <input className="form-input" value={newForm.customer_phone} onChange={e => setNewForm((f: any) => ({ ...f, customer_phone: e.target.value }))} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tipo</label>
+                  <select className="form-select" value={newForm.reservation_type} onChange={e => setNewForm((f: any) => ({ ...f, reservation_type: e.target.value }))}>
+                    <option value="table">Solo mesa</option>
+                    <option value="preorder">Mesa + pre-pedido</option>
+                    <option value="pickup">Solo pedido (para retirar)</option>
+                  </select>
+                </div>
+                {newForm.reservation_type !== 'pickup' && (
+                  <div className="form-group">
+                    <label className="form-label">Personas</label>
+                    <input type="number" className="form-input" min={1} value={newForm.people_count} onChange={e => setNewForm((f: any) => ({ ...f, people_count: e.target.value }))} />
+                  </div>
+                )}
+                <div className="form-group">
+                  <label className="form-label">Fecha *</label>
+                  <input type="date" className="form-input" value={newForm.date} onChange={e => setNewForm((f: any) => ({ ...f, date: e.target.value }))} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Hora *</label>
+                  <input type="time" className="form-input" value={newForm.time} onChange={e => setNewForm((f: any) => ({ ...f, time: e.target.value }))} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Notas</label>
+                  <textarea className="form-input" rows={2} value={newForm.notes} onChange={e => setNewForm((f: any) => ({ ...f, notes: e.target.value }))} />
+                </div>
+                <div className={styles.detailActions}>
+                  <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Guardando...' : '✅ Crear reserva'}</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowNewForm(false)}>Cancelar</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {selected && !showNewForm && (
             <div className={styles.detail}>
               <div className={styles.detailHeader}>
                 <h2>Detalle de reserva</h2>
@@ -138,8 +218,8 @@ export default function AdminReservations() {
                 {selected.customer_phone && <div className={styles.detailRow}><span>Teléfono</span><a href={`https://wa.me/${selected.customer_phone.replace(/\D/g,'')}`} target="_blank" rel="noreferrer">{selected.customer_phone} 💬</a></div>}
                 <div className={styles.detailRow}><span>Fecha</span><strong>{formatDate(selected.date)}</strong></div>
                 <div className={styles.detailRow}><span>Hora</span><strong>{selected.time.slice(0, 5)}</strong></div>
-                <div className={styles.detailRow}><span>Personas</span><strong>{selected.people_count}</strong></div>
-                <div className={styles.detailRow}><span>Tipo</span><strong>{selected.reservation_type === 'table' ? '🪑 Solo mesa' : '📋 Mesa + pre-pedido'}</strong></div>
+                {selected.reservation_type !== 'pickup' && <div className={styles.detailRow}><span>Personas</span><strong>{selected.people_count}</strong></div>}
+                <div className={styles.detailRow}><span>Tipo</span><strong>{typeLabel[selected.reservation_type]}</strong></div>
                 <div className={styles.detailRow}><span>Estado</span>
                   <span className={styles.statusBadge} style={{ background: `${statusColor[selected.status]}22`, color: statusColor[selected.status] }}>
                     {statusLabel[selected.status]}
