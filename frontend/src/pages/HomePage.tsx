@@ -32,7 +32,7 @@ export default function HomePage() {
             <p className={styles.subtitle}>Pedí desde tu mesa, para llevar o con envío. Rápido, fácil y seguro.</p>
             <div className={styles.heroBtns}>
               <Link to="/menu" className="btn btn-accent btn-lg">Ver Menú</Link>
-              <Link to="/menu" className="btn btn-secondary btn-lg" style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white' }}>Hacer un pedido</Link>
+              <Link to="/reservar" className="btn btn-secondary btn-lg" style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white' }}>Hacer una reserva</Link>
             </div>
           </div>
           <div className={styles.heroStats}>

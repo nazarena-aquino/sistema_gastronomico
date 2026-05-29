@@ -7,6 +7,7 @@ import tableRoutes from './tables.routes';
 import customerRoutes from './customers.routes';
 import discountRoutes from './discounts.routes';
 import configRoutes from './config.routes';
+import reservationRoutes from './reservations.routes';
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.use('/tables', tableRoutes);
 router.use('/customers', customerRoutes);
 router.use('/discounts', discountRoutes);
 router.use('/config', configRoutes);
+router.use('/reservations', reservationRoutes);
 router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 export default router;

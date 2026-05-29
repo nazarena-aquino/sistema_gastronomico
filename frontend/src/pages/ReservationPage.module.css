@@ -1,0 +1,72 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: 2rem 1rem 4rem; }
+.container { max-width: 680px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 2rem; }
+.header h1 { font-family: var(--font-display); font-size: 2rem; color: var(--color-primary); margin-bottom: 0.25rem; }
+.header p { color: var(--color-muted); }
+
+/* Progress */
+.progress { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2rem; }
+.progressStep { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1; position: relative; }
+.progressStep:not(:last-child)::after { content: ''; position: absolute; top: 14px; left: 60%; width: 80%; height: 2px; background: var(--color-border); z-index: 0; }
+.progressStep.progressActive:not(:last-child)::after { background: var(--color-primary); }
+.progressDot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; background: var(--color-border); color: var(--color-muted); z-index: 1; transition: all 0.2s; }
+.progressStep.progressActive .progressDot { background: var(--color-primary); color: white; }
+.progressLabel { font-size: 0.7rem; color: var(--color-muted); text-align: center; }
+.progressStep.progressActive .progressLabel { color: var(--color-primary); font-weight: 600; }
+
+/* Step Card */
+.stepCard { background: white; border-radius: var(--radius-lg); border: 1px solid var(--color-border); padding: 1.75rem; box-shadow: var(--shadow-sm); }
+.stepCard h2 { font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary); margin-bottom: 1.25rem; }
+
+/* Type selection */
+.typeGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.typeCard { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1.5rem 1rem; border: 2px solid var(--color-border); border-radius: var(--radius-lg); background: white; cursor: pointer; transition: all 0.2s; text-align: center; }
+.typeCard:hover { border-color: var(--color-primary); }
+.typeCard.typeSelected { border-color: var(--color-primary); background: #f0f0ff; }
+.typeIcon { font-size: 2.5rem; }
+.typeCard strong { font-family: var(--font-display); color: var(--color-primary); }
+.typeCard p { font-size: 0.82rem; color: var(--color-muted); margin: 0; }
+
+/* Form */
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 480px) { .formGrid { grid-template-columns: 1fr; } .typeGrid { grid-template-columns: 1fr; } }
+
+/* Time slots */
+.timeGrid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.timeSlot { padding: 0.4rem 0.85rem; border: 1.5px solid var(--color-border); border-radius: var(--radius-sm); background: white; cursor: pointer; font-size: 0.9rem; font-family: var(--font-body); transition: all 0.15s; }
+.timeSlot:hover { border-color: var(--color-primary); }
+.timeSlot.timeSelected { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+.closedMsg { color: var(--color-error); font-size: 0.875rem; margin-top: 0.5rem; }
+
+/* Products */
+.categories { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.catBtn { padding: 0.35rem 0.85rem; border-radius: 999px; border: 1.5px solid var(--color-border); background: white; cursor: pointer; font-size: 0.82rem; font-family: var(--font-body); transition: all 0.15s; }
+.catBtn.catActive { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+.productGrid { display: flex; flex-direction: column; gap: 0.6rem; max-height: 380px; overflow-y: auto; }
+.productCard { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: white; }
+.productImg { width: 44px; height: 44px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; }
+.productInfo { flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+.productInfo strong { color: var(--color-primary); }
+.productInfo span { color: var(--color-muted); }
+.qtyControl { display: flex; align-items: center; gap: 0.4rem; }
+.qtyControl button { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--color-border); background: white; cursor: pointer; font-size: 1rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.qtyControl span { min-width: 20px; text-align: center; font-weight: 600; }
+.addBtn { padding: 0.3rem 0.7rem; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; font-family: var(--font-body); }
+.cartSummary { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8f9fa; border-radius: var(--radius-sm); margin-top: 0.75rem; font-size: 0.875rem; }
+
+/* Summary */
+.summary { background: #f8f9fa; border-radius: var(--radius-md); padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.summaryRow { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.summaryRow span { color: var(--color-muted); }
+
+/* Actions */
+.stepActions { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.5rem; }
+
+/* Success */
+.successWrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--color-bg); }
+.successCard { background: white; border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; max-width: 420px; width: 100%; box-shadow: var(--shadow-md); }
+.successIcon { font-size: 3.5rem; margin-bottom: 1rem; }
+.successCard h2 { font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 0.5rem; }
+.successCard > p { color: var(--color-muted); margin-bottom: 1.5rem; }
+.successDetails { background: #f8f9fa; border-radius: var(--radius-md); padding: 1rem; text-align: left; }
+.successDetails p { margin: 0.3rem 0; font-size: 0.9rem; }

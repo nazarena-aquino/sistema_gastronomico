@@ -9,6 +9,7 @@ import MenuPage from './pages/MenuPage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderStatusPage from './pages/OrderStatusPage'
+import ReservationPage from './pages/ReservationPage'
 
 // Mozo
 import MozoLoginPage from './pages/mozo/MozoLoginPage'
@@ -33,6 +34,7 @@ import AdminStock from './pages/admin/AdminStock'
 import AdminReports from './pages/admin/AdminReports'
 import AdminConfig from './pages/admin/AdminConfig'
 import AdminQR from './pages/admin/AdminQR'
+import AdminReservations from './pages/admin/AdminReservations'
 
 function ProtectedAdmin({ children }: { children: React.ReactNode }) {
   const { admin, token } = useAuthStore()
@@ -57,6 +59,7 @@ export default function App() {
       <Route path="/cart" element={<CartPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/order-status/:orderNumber" element={<OrderStatusPage />} />
+      <Route path="/reservar" element={<ReservationPage />} />
 
       {/* Mozo */}
       <Route path="/mozo/login" element={<MozoLoginPage />} />
@@ -82,6 +85,7 @@ export default function App() {
         <Route path="reports" element={<AdminReports />} />
         <Route path="config" element={<AdminConfig />} />
         <Route path="qr" element={<AdminQR />} />
+        <Route path="reservations" element={<AdminReservations />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
