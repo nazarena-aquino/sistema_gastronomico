@@ -115,25 +115,39 @@ export default function MozoOrderPage() {
     } finally { setSubmitting(false) }
   }
 
-  const handleDeliver = async (orderId: string) => {
+  const handleDeliverAll = async () => {
+    const readyOrders = activeOrders.filter((o) => o.status === 'ready')
     try {
-      await orderApi.updateStatus(orderId, 'delivered')
+      await Promise.all(readyOrders.map((o) => orderApi.updateStatus(o.id, 'delivered')))
       toast.success('Pedido entregado ✅')
       await loadAll()
     } catch { toast.error('Error') }
   }
 
-  const handleCharge = async (orderId: string) => {
+  const handleChargeAll = async () => {
+    const toCharge = activeOrders.filter((o) => o.status === 'delivered' && o.payment_status !== 'paid')
     try {
-      await paymentApi.confirmPayment(orderId)
+      await Promise.all(toCharge.map((o) => paymentApi.confirmPayment(o.id)))
       toast.success('Cobro registrado 💰')
       await loadAll()
     } catch { toast.error('Error al registrar cobro') }
   }
 
+  const handleFreeTable = async () => {
+    if (!table) return
+    try {
+      await tableApi.updateStatus(table.id, { status: 'free' })
+      toast.success('Mesa liberada')
+      navigate('/mozo')
+    } catch { toast.error('Error al liberar mesa') }
+  }
+
   const total = cart.reduce((s, i) => s + i.price * i.quantity, 0)
   const filtered = products.filter((p) => activeCategory === 'all' || p.category_id === activeCategory)
   const hasReadyOrders = activeOrders.some((o) => o.status === 'ready')
+  const readyOrders = activeOrders.filter((o) => o.status === 'ready')
+  const deliveredUnpaid = activeOrders.filter((o) => o.status === 'delivered' && o.payment_status !== 'paid')
+  const combinedTotal = activeOrders.reduce((s, o) => s + o.total, 0)
 
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
 
@@ -165,47 +179,56 @@ export default function MozoOrderPage() {
               <div className="icon">📋</div>
               <p>No hay pedidos activos en esta mesa</p>
               <button className="btn btn-primary btn-sm" onClick={() => setTab('new')}>+ Tomar pedido</button>
+              {table?.status !== 'free' && (
+                <button className="btn btn-secondary btn-sm" style={{ marginTop: '0.5rem' }} onClick={handleFreeTable}>🔓 Liberar mesa</button>
+              )}
             </div>
           ) : (
-            activeOrders.map((order) => (
-              <div key={order.id} className={`${styles.orderCard} ${order.status === 'ready' ? styles.orderReady : ''}`}>
-                <div className={styles.orderCardHeader}>
-                  <span className={styles.orderNum}>{order.order_number}</span>
-                  <span className="badge" style={{ background: `${orderStatusColor[order.status]}22`, color: orderStatusColor[order.status] }}>
-                    {orderStatusLabel[order.status]}
-                  </span>
-                </div>
-                <div className={styles.orderItems}>
-                  {(order.order_items || []).map((item) => (
-                    <div key={item.id} className={styles.orderItem}>
-                      <span className={styles.itemQty}>{item.quantity}×</span>
-                      <span className={styles.itemName}>{item.product_name}</span>
-                      <span className={styles.itemPrice}>{formatPrice(item.subtotal)}</span>
+            <div className={`${styles.orderCard} ${hasReadyOrders ? styles.orderReady : ''}`}>
+              {activeOrders.map((order, idx) => (
+                <div key={order.id}>
+                  {activeOrders.length > 1 && (
+                    <div className={styles.orderCardHeader}>
+                      <span className={styles.orderNum}>{order.order_number}</span>
+                      <span className="badge" style={{ background: `${orderStatusColor[order.status]}22`, color: orderStatusColor[order.status] }}>
+                        {orderStatusLabel[order.status]}
+                      </span>
                     </div>
-                  ))}
+                  )}
+                  <div className={styles.orderItems}>
+                    {(order.order_items || []).map((item) => (
+                      <div key={item.id} className={styles.orderItem}>
+                        <span className={styles.itemQty}>{item.quantity}×</span>
+                        <span className={styles.itemName}>{item.product_name}</span>
+                        <span className={styles.itemPrice}>{formatPrice(item.subtotal)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {idx < activeOrders.length - 1 && <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '0.75rem 0' }} />}
                 </div>
-                <div className={styles.orderTotal}>
-                  <span>Total</span>
-                  <strong>{formatPrice(order.total)}</strong>
-                </div>
-                {order.status === 'ready' && (
-                  <button
-                    className={`btn btn-success btn-lg ${styles.deliverBtn}`}
-                    onClick={() => handleDeliver(order.id)}
-                  >
-                    ✅ Marcar como entregado
-                  </button>
-                )}
-                {order.status === 'delivered' && order.payment_status !== 'paid' && (
-                  <button
-                    className={`btn btn-primary btn-lg ${styles.deliverBtn}`}
-                    onClick={() => handleCharge(order.id)}
-                  >
-                    💰 Cobrar
-                  </button>
-                )}
+              ))}
+              <div className={styles.orderTotal}>
+                <span>Total</span>
+                <strong>{formatPrice(combinedTotal)}</strong>
               </div>
-            ))
+              {readyOrders.length > 0 && (
+                <button className={`btn btn-success btn-lg ${styles.deliverBtn}`} onClick={handleDeliverAll}>
+                  ✅ Marcar como entregado
+                </button>
+              )}
+              {deliveredUnpaid.length > 0 && readyOrders.length === 0 && (
+                <button className={`btn btn-primary btn-lg ${styles.deliverBtn}`} onClick={handleChargeAll}>
+                  💰 Cobrar
+                </button>
+              )}
+              <button
+                className="btn btn-secondary btn-sm"
+                style={{ marginTop: '0.5rem', width: '100%' }}
+                onClick={handleFreeTable}
+              >
+                🔓 Liberar mesa
+              </button>
+            </div>
           )}
         </div>
       )}

@@ -13,7 +13,6 @@ export default function MozoTablesPage() {
   const [readyTables, setReadyTables] = useState<Set<string>>(new Set())
   const [newOrderTables, setNewOrderTables] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState<'map' | 'list'>(() => window.innerWidth < 768 ? 'list' : 'map')
 
   useEffect(() => { tablesRef.current = tables }, [tables])
 
@@ -73,16 +72,10 @@ export default function MozoTablesPage() {
     navigate(`/mozo/order/${table.id}`)
   }
 
-  const zones = [...new Set(tables.map((t) => t.zone || 'Principal'))]
-
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <h1>Mesas</h1>
-        <div className={styles.viewToggle}>
-          <button className={`${styles.toggleBtn} ${view === 'map' ? styles.active : ''}`} onClick={() => setView('map')}>🗺️ Mapa</button>
-          <button className={`${styles.toggleBtn} ${view === 'list' ? styles.active : ''}`} onClick={() => setView('list')}>📋 Lista</button>
-        </div>
       </div>
 
       <div className={styles.legend}>
@@ -103,75 +96,38 @@ export default function MozoTablesPage() {
       </div>
 
       {loading ? <div className="loading-center"><div className="spinner" /></div> : (
-        view === 'map' ? (
-          zones.map((zone) => (
-            <div key={zone} className={styles.zone}>
-              <h2 className={styles.zoneTitle}>{zone}</h2>
-              <div className={styles.mapArea}>
-                {tables.filter((t) => (t.zone || 'Principal') === zone).map((table) => {
-                  const isReady = readyTables.has(table.id)
-                  const hasNew = newOrderTables.has(table.id)
-                  return (
-                    <div
-                      key={table.id}
-                      className={`${styles.mapTable} ${styles[`shape_${table.shape}`]} ${isReady ? styles.mapTableReady : ''} ${hasNew && !isReady ? styles.mapTableNew : ''}`}
-                      style={{
-                        left: table.position_x,
-                        top: table.position_y,
-                        borderColor: isReady ? '#10B981' : hasNew ? '#3B82F6' : tableStatusColor[table.status]
-                      } as any}
-                      onClick={() => handleTableClick(table)}
-                    >
-                      <span className={styles.mapTableNum}>{table.number}</span>
-                      <span className={styles.mapTableCap}>{table.capacity}p</span>
-                      {isReady
-                        ? <span className={styles.mapTableStatus}>✅</span>
-                        : hasNew
-                        ? <span className={styles.mapTableStatus}>🆕</span>
-                        : <span className={styles.mapTableStatus} style={{ color: tableStatusColor[table.status] }}>
-                            {table.status === 'free' ? '●' : '◐'}
-                          </span>
-                      }
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className={styles.list}>
-            {tables.length === 0 ? (
-              <div className="empty-state"><div className="icon">🪑</div><p>No hay mesas configuradas</p></div>
-            ) : (
-              tables.map((table) => {
-                const isReady = readyTables.has(table.id)
-                const hasNew = newOrderTables.has(table.id)
-                return (
-                  <div
-                    key={table.id}
-                    className={`${styles.listItem} ${isReady ? styles.listItemReady : ''} ${hasNew && !isReady ? styles.listItemNew : ''}`}
-                    onClick={() => handleTableClick(table)}
-                    style={{ borderLeftColor: isReady ? '#10B981' : hasNew ? '#3B82F6' : tableStatusColor[table.status] }}
-                  >
-                    <div className={styles.listMain}>
-                      <div className={styles.listTableNum}>Mesa {table.number}</div>
-                      <div className={styles.listMeta}>{table.capacity} personas · {table.zone || 'Principal'}</div>
-                    </div>
-                    {isReady ? (
-                      <span className={styles.readyBadge}>✅ Listo para entregar</span>
-                    ) : hasNew ? (
-                      <span className={styles.newBadge}>🆕 Pedido nuevo</span>
-                    ) : (
-                      <span className="badge" style={{ background: `${tableStatusColor[table.status]}22`, color: tableStatusColor[table.status] }}>
-                        {tableStatusLabel[table.status]}
-                      </span>
-                    )}
+        <div className={styles.list}>
+          {tables.length === 0 ? (
+            <div className="empty-state"><div className="icon">🪑</div><p>No hay mesas configuradas</p></div>
+          ) : (
+            tables.map((table) => {
+              const isReady = readyTables.has(table.id)
+              const hasNew = newOrderTables.has(table.id)
+              return (
+                <div
+                  key={table.id}
+                  className={`${styles.listItem} ${isReady ? styles.listItemReady : ''} ${hasNew && !isReady ? styles.listItemNew : ''}`}
+                  onClick={() => handleTableClick(table)}
+                  style={{ borderLeftColor: isReady ? '#10B981' : hasNew ? '#3B82F6' : tableStatusColor[table.status] }}
+                >
+                  <div className={styles.listMain}>
+                    <div className={styles.listTableNum}>Mesa {table.number}</div>
+                    <div className={styles.listMeta}>{table.capacity} personas · {table.zone || 'Principal'}</div>
                   </div>
-                )
-              })
-            )}
-          </div>
-        )
+                  {isReady ? (
+                    <span className={styles.readyBadge}>✅ Listo para entregar</span>
+                  ) : hasNew ? (
+                    <span className={styles.newBadge}>🆕 Pedido nuevo</span>
+                  ) : (
+                    <span className="badge" style={{ background: `${tableStatusColor[table.status]}22`, color: tableStatusColor[table.status] }}>
+                      {tableStatusLabel[table.status]}
+                    </span>
+                  )}
+                </div>
+              )
+            })
+          )}
+        </div>
       )}
     </div>
   )
