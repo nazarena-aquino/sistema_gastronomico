@@ -1,0 +1,11 @@
+.page { max-width: 1000px; }
+.header { margin-bottom: 1.5rem; }
+.header h1 { font-family: var(--font-display); font-size: 1.6rem; color: var(--color-primary); margin-bottom: 0.15rem; }
+.header p { color: var(--color-muted); font-size: 0.875rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+.qrCard { background: white; border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--color-border); display: flex; flex-direction: column; align-items: center; gap: 0.75rem; text-align: center; }
+.qrCard h2 { font-family: var(--font-display); font-size: 1rem; color: var(--color-primary); }
+.url { font-size: 0.72rem; color: var(--color-muted); word-break: break-all; }
+.tableInfo { font-size: 0.78rem; color: var(--color-muted); }
+.qrImg { width: 160px; height: 160px; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.qrActions { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }

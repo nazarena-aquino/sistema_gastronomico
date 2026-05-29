@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { getBusinessConfig, updateBusinessConfig, toggleBusinessOpen, getMPPublicKey, generateMenuQR, generateTableQR } from '../controllers/config.controller';
+import { authMiddleware } from '../middleware/auth';
+const router = Router();
+router.get('/', getBusinessConfig);
+router.get('/mp-public-key', getMPPublicKey);
+router.get('/qr/menu', generateMenuQR);
+router.get('/qr/table/:tableNumber', authMiddleware, generateTableQR);
+router.put('/', authMiddleware, updateBusinessConfig);
+router.patch('/toggle-open', authMiddleware, toggleBusinessOpen);
+export default router;

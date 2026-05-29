@@ -1,0 +1,37 @@
+.main { min-height: 100vh; padding: 2rem 0 4rem; }
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 1rem; text-align: center; }
+.emptyIcon { font-size: 5rem; }
+.empty h2 { font-family: var(--font-display); font-size: 1.75rem; color: var(--color-primary); }
+.empty p { color: var(--color-muted); }
+.layout { display: grid; grid-template-columns: 1fr 360px; gap: 2rem; align-items: start; }
+.items { display: flex; flex-direction: column; gap: 0; }
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.header h1 { font-family: var(--font-display); font-size: 1.75rem; color: var(--color-primary); }
+.item { background: white; border-radius: var(--radius-lg); padding: 1.1rem; margin-bottom: 0.75rem; border: 1px solid var(--color-border); display: flex; align-items: flex-start; gap: 0.9rem; animation: fadeIn 0.2s ease; }
+.itemEmoji { font-size: 2rem; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--color-bg); border-radius: var(--radius-md); flex-shrink: 0; }
+.itemInfo { flex: 1; }
+.itemInfo h3 { font-family: var(--font-display); font-size: 1rem; color: var(--color-primary); margin-bottom: 0.15rem; }
+.unitPrice { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 0.25rem; }
+.modsList { font-size: 0.78rem; color: var(--color-accent); margin-bottom: 0.4rem; }
+.notesInput { width: 100%; padding: 0.4rem 0.7rem; border: 1.5px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.82rem; outline: none; font-family: var(--font-body); background: var(--color-bg); }
+.notesInput:focus { border-color: var(--color-accent); }
+.itemRight { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+.subtotal { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--color-primary); }
+.qty { display: flex; align-items: center; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; }
+.qty button { width: 30px; height: 30px; background: white; border: none; font-size: 1rem; cursor: pointer; font-weight: 600; transition: background var(--transition); }
+.qty button:hover { background: var(--color-bg); }
+.qty span { min-width: 34px; text-align: center; font-weight: 600; font-size: 0.875rem; background: var(--color-bg); height: 30px; display: flex; align-items: center; justify-content: center; }
+.removeBtn { background: none; border: none; color: var(--color-muted); cursor: pointer; font-size: 0.78rem; padding: 3px 6px; border-radius: var(--radius-sm); transition: all var(--transition); }
+.removeBtn:hover { color: var(--color-error); background: #FEE2E2; }
+.keepBrowsing { color: var(--color-accent); font-size: 0.875rem; text-decoration: none; margin-top: 0.5rem; display: inline-block; }
+.summary { position: sticky; top: calc(var(--nav-height) + 1rem); }
+.summaryCard { background: white; border-radius: var(--radius-lg); padding: 1.75rem; border: 1px solid var(--color-border); box-shadow: var(--shadow-md); }
+.summaryCard h2 { font-family: var(--font-display); font-size: 1.3rem; color: var(--color-primary); margin-bottom: 1.25rem; }
+.summaryLine { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--color-muted); margin-bottom: 0.5rem; }
+.divider { height: 1px; background: var(--color-border); margin: 1rem 0; }
+.totalRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.totalRow span:first-child { font-weight: 600; color: var(--color-primary); }
+.totalAmt { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--color-primary); }
+.shippingNote { display: flex; gap: 0.5rem; background: var(--color-bg); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--color-muted); }
+.checkoutBtn { width: 100%; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .summary { position: static; order: -1; } }

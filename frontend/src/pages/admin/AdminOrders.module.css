@@ -1,0 +1,46 @@
+.page { max-width: 1200px; }
+.pageHeader { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; }
+.pageHeader h1 { font-family: var(--font-display); font-size: 1.6rem; color: var(--color-primary); margin-bottom: 0.15rem; }
+.pageHeader p { color: var(--color-muted); font-size: 0.875rem; }
+.filters { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.layout { display: grid; grid-template-columns: 360px 1fr; gap: 1.25rem; align-items: start; }
+.list { display: flex; flex-direction: column; gap: 0.5rem; }
+.orderCard { background: white; border-radius: var(--radius-md); padding: 0.9rem 1rem; border: 1.5px solid var(--color-border); cursor: pointer; transition: all var(--transition); }
+.orderCard:hover { border-color: var(--color-accent); box-shadow: var(--shadow-sm); }
+.orderCard.selected { border-color: var(--color-primary); background: #EEF2FF; }
+.cardTop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem; }
+.orderNum { font-weight: 700; font-size: 0.875rem; color: var(--color-primary); }
+.cardMeta { font-size: 0.78rem; color: var(--color-muted); margin-bottom: 0.3rem; display: flex; gap: 0.3rem; flex-wrap: wrap; }
+.cardBottom { display: flex; justify-content: space-between; align-items: center; }
+.cardTime { font-size: 0.72rem; color: #bbb; }
+.cardTotal { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--color-primary); }
+.pendingBadge { display: inline-block; margin-top: 0.4rem; font-size: 0.7rem; color: #92400E; background: #FEF3C7; padding: 0.15rem 0.5rem; border-radius: var(--radius-full); }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.75rem; font-size: 0.85rem; color: var(--color-muted); }
+.detail { background: white; border-radius: var(--radius-lg); border: 1px solid var(--color-border); min-height: 400px; position: sticky; top: calc(var(--nav-height) + 1rem); }
+.detailContent { padding: 1.5rem; }
+.detailHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 0.5rem; }
+.detailHeader h2 { font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); }
+.detailHeaderActions { display: flex; align-items: center; gap: 0.5rem; }
+.closeBtn { background: none; border: none; color: var(--color-muted); cursor: pointer; font-size: 1rem; padding: 0.25rem; border-radius: var(--radius-sm); }
+.closeBtn:hover { background: var(--color-bg); }
+.metaGrid { display: flex; flex-direction: column; gap: 0.35rem; background: var(--color-bg); padding: 0.85rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; }
+.metaRow { display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.83rem; gap: 0.5rem; }
+.metaRow span { color: var(--color-muted); flex-shrink: 0; }
+.metaRow strong { color: var(--color-text); text-align: right; }
+.metaRow a { text-decoration: none; }
+.sectionTitle { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); margin: 1.1rem 0 0.6rem; }
+.itemsList { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.75rem; }
+.itemRow { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0.65rem; background: var(--color-bg); border-radius: var(--radius-sm); }
+.itemQty { font-weight: 700; color: var(--color-accent); min-width: 26px; font-size: 0.875rem; }
+.itemInfo { flex: 1; font-size: 0.875rem; }
+.itemInfo p { color: var(--color-text); margin-bottom: 0.1rem; }
+.itemInfo small { color: var(--color-muted); font-size: 0.75rem; display: block; }
+.itemMods { color: var(--color-accent) !important; }
+.itemPrice { font-weight: 600; font-size: 0.875rem; white-space: nowrap; }
+.totalRow { display: flex; justify-content: space-between; padding: 0.6rem 0; border-top: 1px solid var(--color-border); font-size: 0.9rem; font-weight: 600; color: var(--color-primary); }
+.statusBtns { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem; }
+.statusBtns .btn { font-size: 0.75rem; padding: 0.35rem 0.7rem; }
+.paidBox { background: #D1FAE5; color: #065F46; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 600; }
+.pendingPayBox { display: flex; flex-direction: column; gap: 0.5rem; }
+.pendingPayInfo { background: #FEF3C7; color: #92400E; padding: 0.65rem 0.9rem; border-radius: var(--radius-md); font-size: 0.82rem; }
+@media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .detail { position: static; } }

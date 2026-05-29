@@ -1,0 +1,38 @@
+.main { min-height: 100vh; padding: 2rem 0 4rem; background: var(--color-bg); }
+.center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 1rem; text-align: center; }
+.centerIcon { font-size: 4rem; }
+.bannerSuccess { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; padding: 0.9rem 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-weight: 500; }
+.bannerError { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; padding: 0.9rem 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-weight: 500; }
+.bannerWarning { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; padding: 0.9rem 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-weight: 500; }
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.statusCard, .detailCard { background: white; border-radius: var(--radius-lg); padding: 1.75rem; border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); }
+.orderHead { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem; }
+.orderLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); margin-bottom: 0.2rem; }
+.orderNumber { font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); }
+.orderMeta { font-size: 0.85rem; color: var(--color-muted); margin-bottom: 0.3rem; }
+.progress { display: flex; align-items: flex-start; justify-content: space-between; margin: 1.5rem 0; }
+.progressItem { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; position: relative; flex: 1; }
+.dot { width: 30px; height: 30px; border-radius: 50%; background: #e5e7eb; color: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; z-index: 1; transition: all 0.3s ease; }
+.dotDone { background: var(--color-success); color: white; }
+.dotCurrent { background: var(--color-primary); color: white; box-shadow: 0 0 0 4px rgba(26,26,46,0.15); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 4px rgba(26,26,46,0.15); } 50% { box-shadow: 0 0 0 8px rgba(26,26,46,0.08); } }
+.progressLabel { font-size: 0.68rem; color: var(--color-muted); text-align: center; line-height: 1.2; }
+.progressLine { position: absolute; top: 15px; left: calc(50% + 15px); right: calc(-50% + 15px); height: 2px; background: #e5e7eb; z-index: 0; }
+.progressLine.lineDone { background: var(--color-success); }
+.cancelledBox { background: #FEE2E2; color: #991B1B; padding: 0.9rem; border-radius: var(--radius-md); text-align: center; font-weight: 600; margin: 1rem 0; }
+.paymentRow { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--color-muted); margin-top: 1rem; flex-wrap: wrap; }
+.detailCard h2 { font-family: var(--font-display); font-size: 1.2rem; color: var(--color-primary); margin-bottom: 1.25rem; }
+.itemsList { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
+.detailItem { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.itemLeft { display: flex; gap: 0.6rem; flex: 1; }
+.qty { font-weight: 700; color: var(--color-accent); min-width: 26px; }
+.itemName { font-size: 0.875rem; color: var(--color-text); font-weight: 500; }
+.itemNotes { font-size: 0.75rem; color: var(--color-muted); }
+.itemMods { font-size: 0.75rem; color: var(--color-accent); }
+.itemSubtotal { font-weight: 600; font-size: 0.875rem; white-space: nowrap; }
+.totalRow { display: flex; justify-content: space-between; padding: 0.75rem 0; border-top: 2px solid var(--color-border); margin-bottom: 0.5rem; font-weight: 600; color: var(--color-primary); }
+.totalAmt { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.deliveryNote { font-size: 0.8rem; color: var(--color-muted); background: var(--color-bg); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); margin-bottom: 0.75rem; }
+.notes { font-size: 0.85rem; color: var(--color-text); background: var(--color-bg); padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; }
+.actions { display: flex; gap: 0.75rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .progress { overflow-x: auto; } .progressItem { min-width: 65px; } }

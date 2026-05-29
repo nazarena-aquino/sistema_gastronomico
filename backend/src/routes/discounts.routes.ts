@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { getDiscounts, getActiveDiscounts, createDiscount, updateDiscount, deleteDiscount } from '../controllers/discounts.controller';
+import { authMiddleware } from '../middleware/auth';
+const router = Router();
+router.get('/active', getActiveDiscounts);
+router.get('/', authMiddleware, getDiscounts);
+router.post('/', authMiddleware, createDiscount);
+router.put('/:id', authMiddleware, updateDiscount);
+router.delete('/:id', authMiddleware, deleteDiscount);
+export default router;

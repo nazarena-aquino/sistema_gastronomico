@@ -1,0 +1,54 @@
+.page { }
+.header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.backBtn { background: none; border: none; color: var(--color-accent); cursor: pointer; font-size: 0.875rem; font-family: var(--font-body); padding: 0; }
+.header h1 { font-family: var(--font-display); font-size: 1.4rem; color: var(--color-primary); flex: 1; }
+.capacity { font-size: 0.8rem; color: var(--color-muted); background: var(--color-bg); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: 1px solid var(--color-border); }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start; }
+.menu { }
+.categories { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.catBtn { padding: 0.4rem 1rem; border-radius: var(--radius-full); border: 1.5px solid var(--color-border); background: white; color: var(--color-muted); font-size: 0.8rem; cursor: pointer; font-family: var(--font-body); transition: all var(--transition); }
+.catBtn.active { background: var(--color-primary); border-color: var(--color-primary); color: white; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
+.productCard { background: white; border-radius: var(--radius-md); padding: 0.9rem; border: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 0.6rem; }
+.productCard.unavailable { opacity: 0.5; pointer-events: none; }
+.productInfo h3 { font-size: 0.9rem; font-weight: 600; color: var(--color-primary); margin-bottom: 0.15rem; }
+.productInfo p { font-size: 0.75rem; color: var(--color-muted); line-height: 1.3; }
+.price { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--color-primary); }
+.qtyControl { display: flex; align-items: center; justify-content: center; gap: 0; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; }
+.qtyControl button { flex: 1; padding: 0.4rem; background: white; border: none; font-size: 1rem; cursor: pointer; font-weight: 600; transition: background var(--transition); }
+.qtyControl button:hover { background: var(--color-bg); }
+.qtyControl span { min-width: 32px; text-align: center; font-weight: 700; font-size: 0.875rem; background: var(--color-bg); height: 32px; display: flex; align-items: center; justify-content: center; }
+.addBtn { width: 100%; padding: 0.45rem; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: background var(--transition); }
+.addBtn:hover { background: var(--color-primary-light); }
+.noStock { font-size: 0.75rem; color: var(--color-error); text-align: center; }
+.cart { background: white; border-radius: var(--radius-lg); padding: 1.25rem; border: 1px solid var(--color-border); box-shadow: var(--shadow-md); position: sticky; top: calc(56px + 1rem); }
+.cart h2 { font-family: var(--font-display); font-size: 1.1rem; color: var(--color-primary); margin-bottom: 1rem; }
+.emptyCart { text-align: center; padding: 2rem 0; color: var(--color-muted); font-size: 0.875rem; }
+.cartItem { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--color-border); gap: 0.5rem; }
+.cartItemInfo { flex: 1; }
+.cartItemName { font-size: 0.875rem; font-weight: 500; color: var(--color-primary); }
+.cartItemPrice { font-size: 0.8rem; color: var(--color-muted); }
+.cartQty { display: flex; align-items: center; gap: 0; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.cartQty button { width: 26px; height: 26px; background: none; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+.cartQty span { min-width: 24px; text-align: center; font-size: 0.85rem; font-weight: 600; }
+.cartTotal { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; margin-bottom: 0.85rem; font-weight: 600; color: var(--color-primary); }
+.cartTotalAmt { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .cart { position: static; } }
+.tabs { display: flex; gap: 0.25rem; background: var(--color-border); border-radius: var(--radius-md); padding: 3px; margin-bottom: 1.25rem; }
+.tabBtn { flex: 1; padding: 0.5rem 1rem; border-radius: var(--radius-md); border: none; background: transparent; font-size: 0.85rem; cursor: pointer; font-family: var(--font-body); color: var(--color-muted); font-weight: 500; transition: all var(--transition); position: relative; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+.tabBtn.tabActive { background: white; color: var(--color-primary); box-shadow: var(--shadow-sm); }
+.tabBtn.tabReady { color: var(--color-success); font-weight: 700; }
+.readyDot { width: 8px; height: 8px; background: var(--color-success); border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.ordersTab { display: flex; flex-direction: column; gap: 1rem; }
+.orderCard { background: white; border-radius: var(--radius-lg); padding: 1.25rem; border: 1.5px solid var(--color-border); }
+.orderCard.orderReady { border-color: var(--color-success); background: #F0FDF4; }
+.orderCardHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+.orderNum { font-weight: 700; font-size: 0.875rem; color: var(--color-primary); }
+.orderItems { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
+.orderItem { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+.itemQty { font-weight: 700; color: var(--color-accent); min-width: 24px; }
+.itemName { flex: 1; color: var(--color-text); }
+.itemPrice { color: var(--color-muted); font-size: 0.82rem; }
+.orderTotal { display: flex; justify-content: space-between; padding: 0.6rem 0; border-top: 1px solid var(--color-border); font-size: 0.875rem; margin-bottom: 0.75rem; }
+.deliverBtn { width: 100%; }

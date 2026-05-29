@@ -1,0 +1,33 @@
+
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.header h1 { font-family: var(--font-display); font-size: 1.5rem; color: var(--color-primary); }
+.viewToggle { display: flex; gap: 0.25rem; background: var(--color-border); border-radius: var(--radius-md); padding: 3px; }
+.toggleBtn { padding: 0.4rem 0.9rem; border-radius: var(--radius-md); border: none; background: transparent; font-size: 0.82rem; cursor: pointer; font-family: var(--font-body); font-weight: 500; color: var(--color-muted); transition: all var(--transition); }
+.toggleBtn.active { background: white; color: var(--color-primary); box-shadow: var(--shadow-sm); }
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.legendItem { display: flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: var(--color-muted); }
+.legendDot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.zone { margin-bottom: 2rem; }
+.zoneTitle { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 0.75rem; }
+.mapArea { position: relative; background: white; border-radius: var(--radius-lg); border: 1px solid var(--color-border); min-height: 280px; overflow: auto; }
+.mapTable { position: absolute; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; border: 2.5px solid; transition: all 0.2s ease; box-shadow: var(--shadow-sm); }
+.mapTable:hover { transform: scale(1.08); box-shadow: var(--shadow-md); }
+.shape_square { width: 72px; height: 72px; border-radius: var(--radius-md); }
+.shape_round { width: 72px; height: 72px; border-radius: 50%; }
+.mapTableNum { font-weight: 700; font-size: 1rem; color: var(--color-primary); line-height: 1; }
+.mapTableCap { font-size: 0.65rem; color: var(--color-muted); }
+.mapTableStatus { font-size: 0.7rem; }
+.list { display: flex; flex-direction: column; gap: 0.6rem; }
+.listItem { display: flex; align-items: center; justify-content: space-between; background: white; padding: 1rem 1.1rem; border-radius: var(--radius-lg); border: 1px solid var(--color-border); border-left: 4px solid; cursor: pointer; transition: all var(--transition); }
+.listItem:hover { box-shadow: var(--shadow-md); transform: translateX(2px); }
+.listTableNum { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--color-primary); margin-bottom: 0.15rem; }
+.listMeta { font-size: 0.78rem; color: var(--color-muted); }
+.mapTableReady { animation: readyPulse 2s infinite; }
+@keyframes readyPulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(16,185,129,0.3); } 50% { box-shadow: 0 0 0 8px rgba(16,185,129,0.1); } }
+.readyDot { font-size: 0.85rem; }
+.listItemReady { background: #F0FDF4; }
+.readyBadge { background: #D1FAE5; color: #065F46; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); white-space: nowrap; }
+.mapTableNew { animation: newPulse 1.5s infinite; }
+.listItemNew { background: #EFF6FF; }
+.newBadge { background: #DBEAFE; color: #1E40AF; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); white-space: nowrap; }
+@keyframes newPulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); } 50% { box-shadow: 0 0 0 8px rgba(59,130,246,0.1); } }
