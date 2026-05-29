@@ -220,7 +220,8 @@ export const getActiveOrdersByTable = async (req: Request, res: Response): Promi
     // Buscar pedidos por table_id O por table_number (para pedidos hechos desde la web)
     let query = supabaseAdmin.from('orders')
       .select('*, order_items(*)')
-      .not('status', 'in', '("delivered","cancelled")')
+      .not('status', 'in', '("cancelled")')
+      .not('payment_status', 'in', '("paid","refunded")')
       .eq('order_type', 'dine_in')
       .order('created_at', { ascending: false });
 
@@ -248,8 +249,8 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
       .eq('id', id).select('*, order_items(*)').single();
     if (error) throw error;
 
-    // Liberar mesa si pedido entregado o cancelado
-    if ((status === 'delivered' || status === 'cancelled') && data.table_id) {
+    // Liberar mesa solo si se cancela (no al entregar — la mesa se libera al cobrar)
+    if (status === 'cancelled' && data.table_id) {
       await supabaseAdmin.from('tables')
         .update({ status: 'free', current_order_id: null })
         .eq('id', data.table_id);

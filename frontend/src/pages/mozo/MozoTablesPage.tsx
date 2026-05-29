@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { tableApi } from '../../api'
 import { Table } from '../../types'
@@ -9,10 +9,13 @@ import styles from './MozoTablesPage.module.css'
 export default function MozoTablesPage() {
   const navigate = useNavigate()
   const [tables, setTables] = useState<Table[]>([])
+  const tablesRef = useRef<Table[]>([])
   const [readyTables, setReadyTables] = useState<Set<string>>(new Set())
   const [newOrderTables, setNewOrderTables] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<'map' | 'list'>(() => window.innerWidth < 768 ? 'list' : 'map')
+
+  useEffect(() => { tablesRef.current = tables }, [tables])
 
   useEffect(() => {
     load()
@@ -20,26 +23,28 @@ export default function MozoTablesPage() {
     socket.on('nuevo_pedido', (pedido: any) => {
       if (pedido.order_type !== 'dine_in') return
       load()
-      if (pedido.table_id) {
+      const tableId = pedido.table_id || tablesRef.current.find((t) => String(t.number) === String(pedido.table_number))?.id
+      if (tableId) {
         setNewOrderTables((prev) => {
           const next = new Set(prev)
-          next.add(pedido.table_id)
+          next.add(tableId)
           return next
         })
       }
     })
     socket.on('pedido_actualizado', (pedido: any) => {
-      if (!pedido.table_id) return
+      const tableId = pedido.table_id || tablesRef.current.find((t) => String(t.number) === String(pedido.table_number))?.id
+      if (!tableId) return
       setReadyTables((prev) => {
         const next = new Set(prev)
-        if (pedido.status === 'ready') next.add(pedido.table_id)
-        else next.delete(pedido.table_id)
+        if (pedido.status === 'ready') next.add(tableId)
+        else next.delete(tableId)
         return next
       })
-      if (['delivered', 'cancelled'].includes(pedido.status)) {
+      if (['delivered', 'cancelled'].includes(pedido.status) || pedido.payment_status === 'paid') {
         setNewOrderTables((prev) => {
           const next = new Set(prev)
-          next.delete(pedido.table_id)
+          next.delete(tableId)
           return next
         })
       }

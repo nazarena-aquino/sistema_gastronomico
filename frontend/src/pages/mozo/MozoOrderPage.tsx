@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { tableApi, productApi, orderApi } from '../../api'
+import { tableApi, productApi, orderApi, paymentApi } from '../../api'
 import { Table, Product, Category, Order } from '../../types'
 import { formatPrice, orderStatusLabel, orderStatusColor } from '../../utils/format'
 import { socket } from '../../utils/socket'
@@ -46,7 +46,7 @@ export default function MozoOrderPage() {
 
     socket.on('pedido_actualizado', (updated: any) => {
       setActiveOrders((prev) => {
-        if (['delivered', 'cancelled'].includes(updated.status)) {
+        if (updated.status === 'cancelled' || updated.payment_status === 'paid') {
           return prev.filter((o) => o.id !== updated.id)
         }
         return prev.map((o) => o.id === updated.id ? { ...o, ...updated } : o)
@@ -119,13 +119,16 @@ export default function MozoOrderPage() {
     try {
       await orderApi.updateStatus(orderId, 'delivered')
       toast.success('Pedido entregado ✅')
-      const remaining = activeOrders.filter((o) => o.id !== orderId)
-      if (remaining.length === 0) {
-        navigate('/mozo')
-      } else {
-        await loadAll()
-      }
+      await loadAll()
     } catch { toast.error('Error') }
+  }
+
+  const handleCharge = async (orderId: string) => {
+    try {
+      await paymentApi.confirmPayment(orderId)
+      toast.success('Cobro registrado 💰')
+      await loadAll()
+    } catch { toast.error('Error al registrar cobro') }
   }
 
   const total = cart.reduce((s, i) => s + i.price * i.quantity, 0)
@@ -191,6 +194,14 @@ export default function MozoOrderPage() {
                     onClick={() => handleDeliver(order.id)}
                   >
                     ✅ Marcar como entregado
+                  </button>
+                )}
+                {order.status === 'delivered' && order.payment_status !== 'paid' && (
+                  <button
+                    className={`btn btn-primary btn-lg ${styles.deliverBtn}`}
+                    onClick={() => handleCharge(order.id)}
+                  >
+                    💰 Cobrar
                   </button>
                 )}
               </div>

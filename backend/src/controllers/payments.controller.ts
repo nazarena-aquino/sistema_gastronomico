@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import { supabaseAdmin } from '../utils/supabase';
 import { sendSuccess, sendError } from '../utils/response';
+import { io } from '../index';
 
 const getMPClient = () => {
   const token = process.env.MP_ACCESS_TOKEN;
@@ -88,7 +89,16 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
 
       const updateData: any = { payment_status: paymentStatus, payment_id: String(paymentId), updated_at: new Date().toISOString() };
       if (orderStatus) updateData.status = orderStatus;
-      await supabaseAdmin.from('orders').update(updateData).eq('id', orderId);
+      const { data: updatedOrder } = await supabaseAdmin.from('orders')
+        .update(updateData).eq('id', orderId).select('*, order_items(*)').single();
+
+      if (paymentStatus === 'paid' && updatedOrder?.table_id) {
+        await supabaseAdmin.from('tables')
+          .update({ status: 'free', current_order_id: null })
+          .eq('id', updatedOrder.table_id);
+        io.emit('mesa_actualizada', { table_id: updatedOrder.table_id, status: 'free' });
+      }
+      if (updatedOrder) io.emit('pedido_actualizado', updatedOrder);
     }
     res.status(200).json({ received: true });
   } catch (err) {
@@ -101,14 +111,24 @@ export const confirmPayment = async (req: Request, res: Response): Promise<void>
   try {
     const { order_id } = req.params;
     const { data: order } = await supabaseAdmin.from('orders')
-      .select('id, payment_method, payment_status').eq('id', order_id).single();
+      .select('id, payment_method, payment_status, table_id, table_number').eq('id', order_id).single();
     if (!order) { sendError(res, 'Pedido no encontrado', 404); return; }
     if (order.payment_status === 'paid') { sendError(res, 'Ya pagado', 400); return; }
 
     const { data, error } = await supabaseAdmin.from('orders')
       .update({ payment_status: 'paid', updated_at: new Date().toISOString() })
-      .eq('id', order_id).select().single();
+      .eq('id', order_id).select('*, order_items(*)').single();
     if (error) throw error;
+
+    // Liberar mesa al cobrar
+    if (order.table_id) {
+      await supabaseAdmin.from('tables')
+        .update({ status: 'free', current_order_id: null })
+        .eq('id', order.table_id);
+      io.emit('mesa_actualizada', { table_id: order.table_id, status: 'free' });
+    }
+    io.emit('pedido_actualizado', data);
+
     sendSuccess(res, data, 'Pago confirmado');
   } catch { sendError(res, 'Error confirmando pago', 500); }
 };
