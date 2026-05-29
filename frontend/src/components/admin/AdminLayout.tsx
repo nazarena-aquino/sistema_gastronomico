@@ -6,13 +6,13 @@ import styles from './AdminLayout.module.css'
 const NAV = [
   { to: '/admin', label: 'Dashboard', icon: '📊', end: true },
   { to: '/admin/orders', label: 'Pedidos', icon: '📋' },
+  { to: '/admin/reservations', label: 'Reservas', icon: '📅' },
   { to: '/admin/tables', label: 'Mesas', icon: '🪑' },
   { to: '/admin/products', label: 'Productos', icon: '🍽️' },
   { to: '/admin/categories', label: 'Categorías', icon: '🏷️' },
   { to: '/admin/stock', label: 'Stock', icon: '📦' },
-  { to: '/admin/customers', label: 'Clientes', icon: '👥' },
   { to: '/admin/discounts', label: 'Descuentos', icon: '🏷️' },
-  { to: '/admin/reports', label: 'Reportes', icon: '📈' },
+  { to: '/admin/schedule', label: 'Horarios', icon: '🕐' },
   { to: '/admin/qr', label: 'Código QR', icon: '📱' },
   { to: '/admin/config', label: 'Configuración', icon: '⚙️' },
 ]
